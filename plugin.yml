@@ -1,0 +1,25 @@
+name: Fucked
+version: 1
+api: [1.12.0]
+author: Bamuel
+description: User's Will be screwed for life
+main: Fucked\MainClass
+
+commands:
+  fk:
+    description: "User's Will be screwed for life"
+    usage: "/fk <username>"
+    permission: "fk.command.fk"
+
+permissions:
+  fk:
+    default: op
+    description: "User's Will be screwed for life"
+    children:
+      fk.command:
+        default: op
+        description: "Allows ops to use the command"
+        children:
+          fk.command.fk:
+            default: op
+            desctiption: "Perrmission"
