@@ -9,24 +9,34 @@ use pocketmine\Player;
 use pocketmine\IPlayer;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\entity\Entity;
+
 
 class MainClass extends PluginBase implements Listener{
     public function onEnable(){
-        $this->getServer()->getPluginManager()->registerEvents($this, $this);
-		if(!is_dir($this->getDataFolder()."../Fkplayers/ip")){
-			@mkdir($this->getDataFolder()."../Fkplayers/ip", 0777, true);
-		}
+        if (!file_exists('plugins/players')) {
+            mkdir('plugins/players', 0777, true);
+        }
     }
 
 	public function onDisable(){
         //idk
     }
 
-    public function onJoin(){
-        //check if ip match, then fked them
+    public function PlayerJoinEvent(){
+        $player = $this->getServer()->getPlayer($name);
+        $ip = $player->getPlayer()->getAddress();
+        $file = "plugins/players/" . $ip . ".txt";
+        if (file_exists($file)) { //not sure if i done the top bit right
+           //fk function goes here
+        }
+        else {
+            //Nothing goes here
+        }
     }
 
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
+	    $perms =[];
 		switch($command->getName()){
 			case "fk":
 				if(!isset($args[0])){
@@ -37,13 +47,27 @@ class MainClass extends PluginBase implements Listener{
 				$player = $this->getServer()->getPlayer($name);
 				if($player instanceOf Player){
 					$ip = $player->getPlayer()->getAddress();
-                    $sender->sendMessage($ip);
-                    //record ip for other accounts ../Fkplayers/ip/.......
-                    //set gamemode to adventure
+                    #send message
+                    $sender->sendMessage($name . " is now fucked");
+                    $player->sendMessage($name . ", Thank you for screwing up. Now you can suffer");
+
+                    #record ip
+                    $myfile = fopen("plugins/players/" . $ip . ".txt", "w") or die("Unable to open file!");;
+                    fwrite($myfile, $ip);
+                    fclose($myfile);
+
+                    #change to adventure mode
+                    $player->setGamemode(2);
+
                     //remove chat
-                    //remove commands (via pureperms)
-                    //make invisible
-                    //kick the out of the server for every 5min online saying 'You Fucked Up'
+
+                    #Invisible player
+                    foreach($this->getServer()->getOnlinePlayers() as $tempPlayer) {
+                        $tempPlayer->hidePlayer($player);
+                    }
+
+                    //disable pvp for $player
+
 					return true;
 				}
 				else{
